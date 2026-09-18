@@ -379,11 +379,19 @@ impl ConfigObj {
     /// returns the original. Quoting always follows the list-value rules,
     /// since those are what make a value safe to read back.
     pub fn quote(value: &str) -> Result<String> {
+        Self::quote_value(&Value::String(value.to_string()))
+    }
+
+    /// Quote a value, including a list, the way it would be written.
+    ///
+    /// A list gets list syntax, so an empty list is `,` and a one-item list
+    /// keeps its trailing comma, which is what makes both read back as lists.
+    pub fn quote_value(value: &Value) -> Result<String> {
         write::Writer {
             indent: &Indent::default(),
             list_values: true,
         }
-        .quote_for_api(value)
+        .quote_value_for_api(value)
     }
 
     /// Strip one layer of matching quotes from a value, as parsing would.

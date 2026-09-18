@@ -1,3 +1,6 @@
+[workspace]
+members = ["configobj-py"]
+
 [package]
 name = "configobj"
 version = "0.1.0"

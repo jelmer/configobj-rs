@@ -92,8 +92,8 @@ impl Writer<'_> {
 
     /// Quote a value as it would appear in a file, for callers assembling
     /// config text by hand.
-    pub fn quote_for_api(&self, value: &str) -> Result<String> {
-        self.quote(value, true)
+    pub fn quote_value_for_api(&self, value: &Value) -> Result<String> {
+        self.quote_value(value)
     }
 
     /// Quote a key.

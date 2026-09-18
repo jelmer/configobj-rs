@@ -97,6 +97,34 @@ Validation against a configspec is also not implemented.
 
 [lp:710410]: https://bugs.launchpad.net/bzr/+bug/710410
 
+## Python bindings
+
+`configobj-py/` exposes the crate to Python as an extension module,
+`_configobj_rs`, for replacing the Python `configobj` package in an existing
+codebase. It presents the nested-mapping interface callers expect -- indexing,
+assignment, `del`, `setdefault`, `keys`/`items`, `as_bool`/`as_int` -- rather
+than this crate's Rust-flavoured API:
+
+```python
+from _configobj_rs import ConfigObj
+
+conf = ConfigObj(open("bazaar.conf", "rb"))
+conf["DEFAULT"]["email"] = "jelmer@example.com"
+conf.setdefault("ALIASES", {})["up"] = "pull"
+with open("bazaar.conf", "wb") as f:
+    conf.write(outfile=f)
+```
+
+A `Section` keeps a path into the config rather than a copy, so a section held
+across a mutation stays live in both directions, as in Python.
+
+It also exposes `quote`, `unquote` and `parse_value`, which cover the reasons
+callers otherwise reach for configobj's private `_quote`, `_unquote` and
+`_parse`.
+
+Build it with `cargo build -p configobj-py --release`; the tests in
+`configobj-py/tests/` cover the behaviour breezy relies on.
+
 ## Testing
 
 ```console

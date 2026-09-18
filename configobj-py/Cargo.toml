@@ -1,0 +1,17 @@
+[package]
+name = "configobj-py"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.74"
+description = "Python bindings for the configobj crate"
+license = "BSD-3-Clause"
+repository = "https://github.com/jelmer/configobj-rs"
+publish = false
+
+[lib]
+name = "_configobj_rs"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+configobj = { path = ".." }
+pyo3 = { version = "0.28", features = ["abi3-py39"] }

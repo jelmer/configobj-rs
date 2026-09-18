@@ -341,3 +341,43 @@ fn a_caller_quoted_hash_survives_with_list_values_off() {
     assert_eq!(back.get_str("a"), Some(quoted.as_str()));
     assert_eq!(ConfigObj::unquote(quoted.as_str()), "a#b");
 }
+
+#[test]
+fn quoting_a_list_uses_list_syntax() {
+    // breezy quotes whole values, including lists, before storing them. These
+    // are the forms the Python implementation's _quote produces.
+    let cases: Vec<(Value, &str)> = vec![
+        (Value::String("plain".into()), "plain"),
+        (Value::String("with space".into()), "with space"),
+        (Value::String("has#hash".into()), "\"has#hash\""),
+        (Value::List(vec![]), ","),
+        (Value::List(vec!["only".into()]), "only,"),
+        (Value::List(vec!["a".into(), "b".into()]), "a, b"),
+        (
+            Value::List(vec!["1".into(), "a".into(), "with, a comma".into()]),
+            "1, a, \"with, a comma\"",
+        ),
+    ];
+    for (value, expected) in cases {
+        assert_eq!(
+            ConfigObj::quote_value(&value).expect("should quote"),
+            expected,
+            "quoting {value:?}"
+        );
+    }
+}
+
+#[test]
+fn a_quoted_list_reads_back_as_the_same_list() {
+    for value in [
+        Value::List(vec![]),
+        Value::List(vec!["only".into()]),
+        Value::List(vec!["a".into(), "b".into()]),
+        Value::List(vec!["with, a comma".into(), "plain".into()]),
+    ] {
+        let quoted = ConfigObj::quote_value(&value).expect("should quote");
+        let conf = ConfigObj::from_str(&format!("k = {quoted}\n"))
+            .unwrap_or_else(|e| panic!("could not re-read {quoted:?}: {e}"));
+        assert_eq!(conf.get("k"), Some(&value), "wrote {quoted:?}");
+    }
+}
