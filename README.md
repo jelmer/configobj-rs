@@ -137,4 +137,4 @@ awkward input produces errors rather than panics.
 
 ## License
 
-BSD-3-Clause, matching the Python implementation.
+Apache-2.0+
