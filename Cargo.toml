@@ -3,7 +3,7 @@ members = ["configobj-py"]
 
 [package]
 name = "configobj"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 rust-version = "1.83"
 description = "Reader and writer for the ConfigObj INI-style configuration file format"
