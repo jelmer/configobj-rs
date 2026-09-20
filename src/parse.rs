@@ -518,7 +518,12 @@ fn check_item(item: &str) -> Option<()> {
 /// quote is taken as the start of a multiline value before the value rules
 /// ever apply.
 pub(crate) fn parse_value_no_lists(value: &str) -> Option<String> {
-    let lines = vec![format!("k = {value}")];
+    // A triple-quoted value spans lines, so the probe has to present it the
+    // way a file would rather than as one long line.
+    let lines: Vec<String> = format!("k = {value}")
+        .split('\n')
+        .map(str::to_string)
+        .collect();
     let parsed = parse(&lines, Options { list_values: false });
     if !parsed.errors.is_empty() {
         return None;

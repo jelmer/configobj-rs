@@ -153,7 +153,7 @@ impl Writer<'_> {
         // value that would not read back as itself is refused rather than
         // written wrong, where upstream writes `a = a#b` and reads back `a`.
         if !self.list_values {
-            if value.contains('\n') || !reads_back_unchanged(value) {
+            if !reads_back_unchanged(value) {
                 return Err(Error::Unwritable(value.to_string()));
             }
             return Ok(value.to_string());
