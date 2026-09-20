@@ -2,6 +2,7 @@
 members = ["configobj-py"]
 
 [package]
+authors = ["Jelmer Vernooĳ <jelmer@jelmer.uk>"]
 name = "configobj"
 version = "0.1.1"
 edition = "2021"
