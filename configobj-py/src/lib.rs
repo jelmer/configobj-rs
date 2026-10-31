@@ -492,7 +492,7 @@ impl ConfigObj {
         py: Python<'_>,
         infile: Option<&Bound<'_, PyAny>>,
         kwargs: Option<&Bound<'_, PyDict>>,
-    ) -> PyResult<(Self, Section)> {
+    ) -> PyResult<PyClassInitializer<Self>> {
         let list_values = match kwargs.and_then(|k| k.get_item("list_values").transpose()) {
             Some(value) => value?.extract::<bool>()?,
             None => true,
@@ -522,13 +522,11 @@ impl ConfigObj {
                 }
             }
         }
-        Ok((
-            ConfigObj {},
-            Section {
-                shared,
-                path: Path::default(),
-            },
-        ))
+        Ok(PyClassInitializer::from(Section {
+            shared,
+            path: Path::default(),
+        })
+        .add_subclass(ConfigObj {}))
     }
 
     /// Accept and ignore the constructor arguments.
